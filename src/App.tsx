@@ -146,7 +146,6 @@ function App() {
     setBoard((prev: string[][]) => {
       const newBoard = [...prev]
       newBoard[currentRow][currentCol] = letter
-      console.log(`Adding letter at (${currentRow}, ${currentCol})`);
       return newBoard
     })
     if (currentCol < 4) {
@@ -184,13 +183,10 @@ function App() {
     setSubmittedInvalidWord(false)
     if (currentCol === 0) {
       if (currentRow > 0) {
-        setCurrentCol(4);
+        setCurrentCol(5);
         setCurrentRow((prev: number) => prev - 1);
       }
     }
-
-    console.log('-------');
-    console.log(`Deleting at: (${currentRow}, ${currentCol-1})`);
 
     setBoard((prev: any) => {
       const newBoard = [...prev]
