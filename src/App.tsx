@@ -144,15 +144,16 @@ function App() {
   const addLetter = (letter: string) => {
     setSubmittedInvalidWord(false)
     setBoard((prev: string[][]) => {
-      if (currentCol > 4) {
-        return prev
-      }
       const newBoard = [...prev]
       newBoard[currentRow][currentCol] = letter
+      console.log(`Adding letter at (${currentRow}, ${currentCol})`);
       return newBoard
     })
-    if (currentCol < 5) {
-      setCurrentCol((prev: number) => prev + 1)
+    if (currentCol < 4) {
+      setCurrentCol((prev: number) => prev + 1);
+    } else {
+      setCurrentCol(0);
+      setCurrentRow((prev: number) => prev + 1);
     }
   }
 
@@ -176,26 +177,20 @@ function App() {
   }
 
   const onEnterPress = () => {
-    const word = board[currentRow].join('')
-    const [valid, _err] = isValidWord(word)
-    if (!valid) {
-      console.log({ valid, _err })
-      setSubmittedInvalidWord(true)
-      // alert(_err)
-      return
-    }
-
-    if (currentRow === 6) return
-
-    updateCellStatuses(word, currentRow)
-    updateLetterStatuses(word)
-    setCurrentRow((prev: number) => prev + 1)
-    setCurrentCol(0)
+    playAgain();
   }
 
   const onDeletePress = () => {
     setSubmittedInvalidWord(false)
-    if (currentCol === 0) return
+    if (currentCol === 0) {
+      if (currentRow > 0) {
+        setCurrentCol(4);
+        setCurrentRow((prev: number) => prev - 1);
+      }
+    }
+
+    console.log('-------');
+    console.log(`Deleting at: (${currentRow}, ${currentCol-1})`);
 
     setBoard((prev: any) => {
       const newBoard = [...prev]
@@ -203,7 +198,9 @@ function App() {
       return newBoard
     })
 
-    setCurrentCol((prev: number) => prev - 1)
+    if (currentCol > 0) {
+      setCurrentCol((prev: number) => prev - 1);
+    }
   }
 
   const updateCellStatuses = (word: string, rowNumber: number) => {
