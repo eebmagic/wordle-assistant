@@ -151,6 +151,17 @@ function App() {
     if (currentCol < 4) {
       setCurrentCol((prev: number) => prev + 1);
     } else {
+      setCellStatuses((prev: any) => {
+        const newCellStatuses = [...prev];
+        newCellStatuses[currentRow] = [...prev[currentRow]];
+
+        for (let i = 0; i < newCellStatuses[currentRow].length; i++) {
+          newCellStatuses[currentRow][i] = status.gray;
+        }
+
+        return newCellStatuses;
+      })
+
       setCurrentCol(0);
       setCurrentRow((prev: number) => prev + 1);
     }
@@ -192,6 +203,12 @@ function App() {
       const newBoard = [...prev]
       newBoard[currentRow][currentCol - 1] = ''
       return newBoard
+    })
+
+    setCellStatuses((prev: any) => {
+      const newCellStatuses = [...prev];
+      newCellStatuses[currentRow][currentCol - 1] = status.unguessed;
+      return newCellStatuses;
     })
 
     if (currentCol > 0) {
@@ -285,6 +302,28 @@ function App() {
     })
   }
 
+  const onClickFunc = (row: number, col: number) => {
+    if (currentRow <= row) return;
+
+    const roll = [status.gray, status.yellow, status.green];
+    let givenLetter = board[row][col];
+
+    setCellStatuses((prev: any) => {
+      const newCellStatuses = [...prev];
+      newCellStatuses[row] = [...prev[row]];
+
+      if (prev[row][col] == status.unguessed) {
+        newCellStatuses[row][col] = status.gray;
+      } else {
+        let curr = prev[row][col];
+        newCellStatuses[row][col] = roll[(roll.indexOf(curr) + 1) % roll.length];
+      }
+
+      return newCellStatuses;
+    })
+
+  }
+
   const playAgain = () => {
     setAnswer(initialStates.answer())
     setGameState(initialStates.gameState)
@@ -360,6 +399,7 @@ function App() {
                 row.map((letter: string, colNumber: number) => (
                   <span
                     key={colNumber}
+                    onClick={() => onClickFunc(rowNumber, colNumber)}
                     className={`${getCellStyles(
                       rowNumber,
                       colNumber,
