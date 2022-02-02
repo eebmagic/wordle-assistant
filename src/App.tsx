@@ -10,6 +10,8 @@ import answers from './data/answers'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { ReactComponent as Info } from './data/Info.svg'
 import { ReactComponent as Settings } from './data/Settings.svg'
+
+import { rankLetterFreq, rankWordFreq, rankSolnDivision } from './rankings'
 const words = require('./data/words').default as { [key: string]: boolean }
 const fives = require('./data/fives.json');
 
@@ -415,7 +417,50 @@ function App() {
       validWords = validWords.filter((word: string) => word.includes(letter));
     })
 
+    console.log('BEFORE RANKING:')
+    console.log(validWords);
+    validWords = rankWords(validWords);
+    console.log('AFTER RANKING:')
+    console.log(validWords);
+
     return validWords;
+  }
+
+  const rankWords = (wordList: string[]) => {
+    /// TODO: Finish this
+    let rankings = new Map<string, number>();
+
+    wordList.forEach((word: string) => {
+      rankings.set(word, 0);
+    });
+
+    /// TODO: Do adds for this
+    /// TODO: Implement this algo
+    rankLetterFreq(wordList);
+
+    rankWordFreq(wordList).forEach((word: string, i: number) => {
+      let old = rankings.get(word);
+      if (old) {
+        rankings.set(word, old+i*3);
+      } else {
+        rankings.set(word, i*3);
+      }
+    });
+
+    rankSolnDivision(wordList).forEach((word: string, i: number) => {
+      let old = rankings.get(word);
+      if (old) {
+        rankings.set(word, old+i);
+      } else {
+        rankings.set(word, i);
+      }
+    });
+
+    wordList.sort((a: string, b: string) => {
+      return rankings.get(a)! - rankings.get(b)!;
+    });
+
+    return wordList;
   }
 
   const playAgain = () => {
@@ -515,7 +560,6 @@ function App() {
                   type="button"
                   id="startButton"
                   className="rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
-                  // onClick={() => {getSolutions()}}
                   onClick={() => {openModal()}}
                 >
                   FIND SOLUTIONS
@@ -559,6 +603,7 @@ function App() {
           answer={answer}
           playAgain={closeModal}
           wordList={getSolutions().slice(0, 20)}
+          totalLen={getSolutions().length}
         />
         <SettingsModal
           isOpen={settingsModalIsOpen}

@@ -17,6 +17,7 @@ type Props = {
   answer: any
   playAgain: any
   wordList: string[]
+  totalLen: number
 }
 
 export const WordListModal = ({
@@ -30,7 +31,8 @@ export const WordListModal = ({
   longestStreak,
   answer,
   playAgain,
-  wordList
+  wordList,
+  totalLen
 }: Props) => {
   const PlayAgainButton = () => {
     return (
@@ -77,9 +79,8 @@ export const WordListModal = ({
             <Close />
           </button>
 
-          <p className="mt-6"><strong>TEST</strong></p>
           <WordList />
-
+          <p><strong>{`[TOTAL: ${totalLen}]`}</strong></p>
           <PlayAgainButton />
         </div>
       </div>
