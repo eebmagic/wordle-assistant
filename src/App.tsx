@@ -2,6 +2,7 @@ import { letters, status } from './constants'
 import { useEffect, useState } from 'react'
 
 import { EndGameModal } from './components/EndGameModal'
+import { WordListModal } from './components/WordListModal'
 import { InfoModal } from './components/InfoModal'
 import { Keyboard } from './components/Keyboard'
 import { SettingsModal } from './components/SettingsModal'
@@ -414,10 +415,7 @@ function App() {
       validWords = validWords.filter((word: string) => word.includes(letter));
     })
 
-    console.log('VALID WORDS:');
-    console.log(validWords);
-
-    openModal();
+    return validWords;
   }
 
   const playAgain = () => {
@@ -517,7 +515,8 @@ function App() {
                   type="button"
                   id="startButton"
                   className="rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
-                  onClick={() => {getSolutions()}}
+                  // onClick={() => {getSolutions()}}
+                  onClick={() => {openModal()}}
                 >
                   FIND SOLUTIONS
                 </button>
@@ -548,7 +547,7 @@ function App() {
           darkMode={darkMode}
           styles={modalStyles}
         />
-        <EndGameModal
+        <WordListModal
           isOpen={modalIsOpen}
           handleClose={closeModal}
           styles={modalStyles}
@@ -559,6 +558,7 @@ function App() {
           longestStreak={longestStreak}
           answer={answer}
           playAgain={closeModal}
+          wordList={getSolutions().slice(0, 20)}
         />
         <SettingsModal
           isOpen={settingsModalIsOpen}
