@@ -10,6 +10,7 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 import { ReactComponent as Info } from './data/Info.svg'
 import { ReactComponent as Settings } from './data/Settings.svg'
 const words = require('./data/words').default as { [key: string]: boolean }
+const fives = require('./data/fives.json');
 
 const state = {
   playing: 'playing',
@@ -324,6 +325,101 @@ function App() {
 
   }
 
+  const buildExpression = (grays: Set<string>, yellows: Map<string, string>, greens: string) => {
+    const constraints = ['', '', '', '', ''];
+
+    // Add yellow constraints
+    yellows.forEach((yellow: any) => {
+      for (let i = 0; i < yellow.length; i++) {
+        let char = yellow[i];
+        if (char != '.') {
+          constraints[i] += char;
+        }
+      }
+    });
+
+    // Add gray constraints
+    const grayString = [...grays].join('');
+    for (let i = 0; i < constraints.length; i++) {
+      constraints[i] += grayString
+    }
+
+    const parts = [...constraints];
+    for (let i = 0; i < greens.length; i++) {
+      if (greens[i] != '.') {
+        parts[i] = greens[i];
+      } else {
+        parts[i] = `[^${constraints[i]}]`
+      }
+    }
+
+    const expression = RegExp(`^${parts.join('')}$`.toLowerCase());
+    return expression;
+  }
+
+  const getSolutions = () => {
+    let grays = new Set<string>();
+    let yellows = new Map<string, string>();
+    let greens = '.....';
+
+    board.forEach((row: string[], rowInd: number) => {
+      row.forEach((char: string, colInd: number) => {
+        if (char) {
+          let status = cellStatuses[rowInd][colInd];
+
+          switch (status) {
+            case "gray":
+              grays.add(char);
+              break;
+
+            case "yellow":
+              if (yellows.has(char)) {
+                const str = yellows.get(char);
+                if (str) {
+                  const newStr = str.split('');
+                  newStr[colInd] = char;
+                  yellows.set(char, newStr.join(''));
+                }
+              } else {
+                let start = '.....'.split('');
+                start[colInd] = char;
+                yellows.set(char, start.join(''));
+              }
+              break;
+
+            case "green":
+              if (greens[colInd] == '.') {
+                const str = greens.split('');
+                str[colInd] = char;
+                greens = str.join('');
+              } else {
+                if (greens[colInd] != char) {
+                  console.log(`##ERROR: Green char already defined as ${greens[colInd]} at ${colInd}: ${greens}`)
+                }
+              }
+              break;
+
+          }
+        }
+      });
+    });
+
+    const expression = buildExpression(grays, yellows, greens);
+    const yellowLetters = Array.from(yellows.keys());
+
+    let validWords = [...fives];
+    validWords = validWords.filter((word: string) => expression.test(word));
+    yellowLetters.forEach((letter: string) => {
+      letter = letter.toLowerCase();
+      validWords = validWords.filter((word: string) => word.includes(letter));
+    })
+
+    console.log('VALID WORDS:');
+    console.log(validWords);
+
+    openModal();
+  }
+
   const playAgain = () => {
     setAnswer(initialStates.answer())
     setGameState(initialStates.gameState)
@@ -392,7 +488,7 @@ function App() {
             <Info />
           </button>
         </header>
-        <div className="flex items-center flex-col py-3 flex-1 justify-center relative">
+        <div className="flex items-center bottom-8 flex-col py-3 flex-1 justify-center relative">
           <div className="relative">
             <div className="grid grid-cols-5 grid-flow-row gap-4">
               {board.map((row: string[], rowNumber: number) =>
@@ -411,6 +507,23 @@ function App() {
                 ))
               )}
             </div>
+
+            <div
+              className={`absolute -bottom-16 left-1/2 transform -translate-x-1/2`}
+            >
+              <div className={darkMode ? 'dark' : ''}>
+                <button
+                  autoFocus
+                  type="button"
+                  id="startButton"
+                  className="rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
+                  onClick={() => {getSolutions()}}
+                >
+                  FIND SOLUTIONS
+                </button>
+              </div>
+            </div>
+
             <div
               className={`absolute -bottom-24 left-1/2 transform -translate-x-1/2 ${
                 gameState === state.playing ? 'hidden' : ''
@@ -445,7 +558,7 @@ function App() {
           currentStreak={currentStreak}
           longestStreak={longestStreak}
           answer={answer}
-          playAgain={playAgain}
+          playAgain={closeModal}
         />
         <SettingsModal
           isOpen={settingsModalIsOpen}
