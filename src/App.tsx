@@ -360,10 +360,30 @@ function App() {
     return expression;
   }
 
+  const checkFullWords = () => {
+    let out = true;
+    board.forEach((row: string[]) => {
+      let a = row[0] == '';
+      let b = row[4] == '';
+      let result = !(a == b);
+      if (!(a == b)) {
+        out = false;
+      }
+    });
+
+    return out;
+  }
+
   const getSolutions = () => {
     // Optimization to avoid calls on just 3 letters
-    if (board[0][4] == '') {
+    // if (board[0][4] == '') {
+    let fullWords = checkFullWords();
+    console.log(`Dont check?: ${fullWords}`);
+    if (!fullWords) {
+      console.log('NOT CHECKING BECAUSE NOT FULL BOARD');
       return [];
+    } else {
+      console.log('CHECKING NOW')
     }
     let grays = new Set<string>();
     let yellows = new Map<string, string>();
@@ -426,32 +446,40 @@ function App() {
   }
 
   const rankWords = (wordList: string[]) => {
-    /// TODO: Finish this
+    const letterWeight = 1;
+    const wordFreqWeight = 6;
+    const divisionWeight = 2;
+
     let rankings = new Map<string, number>();
 
     wordList.forEach((word: string) => {
       rankings.set(word, 0);
     });
 
-    /// TODO: Do adds for this
-    /// TODO: Implement this algo
-    rankLetterFreq(wordList);
+    rankLetterFreq(wordList).forEach((word: string, i: number) => {
+      let old = rankings.get(word);
+      if (old) {
+        rankings.set(word, old+(i*letterWeight));
+      } else {
+        rankings.set(word, (i*letterWeight));
+      }
+    })
 
     rankWordFreq(wordList).forEach((word: string, i: number) => {
       let old = rankings.get(word);
       if (old) {
-        rankings.set(word, old+i*3);
+        rankings.set(word, old+(i*wordFreqWeight));
       } else {
-        rankings.set(word, i*3);
+        rankings.set(word, (i*wordFreqWeight));
       }
     });
 
     rankSolnDivision(wordList).forEach((word: string, i: number) => {
       let old = rankings.get(word);
       if (old) {
-        rankings.set(word, old+i);
+        rankings.set(word, old+(i*divisionWeight));
       } else {
-        rankings.set(word, i);
+        rankings.set(word, (i*divisionWeight));
       }
     });
 

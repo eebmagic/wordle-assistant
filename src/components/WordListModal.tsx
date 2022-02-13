@@ -79,9 +79,9 @@ export const WordListModal = ({
             <Close />
           </button>
 
+          <p><strong>{`[Total Remaining Words: ${totalLen}]`}</strong></p>
+          <br/>
           <WordList />
-          <p><strong>{`[TOTAL: ${totalLen}]`}</strong></p>
-          <PlayAgainButton />
         </div>
       </div>
     </Modal>
