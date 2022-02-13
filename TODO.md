@@ -1,4 +1,5 @@
 - [x] Add restart button
 - [x] Fix number of calls to findSolns()
 - [ ] Gut out leftover original code
+- [ ] Address compile warnings
 - [ ] Change styling to distinguish from original fork?
