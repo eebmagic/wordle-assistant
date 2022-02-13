@@ -37,3 +37,11 @@ html {
 .font-righteous {
   font-family: 'Righteous', cursive;
 }
+
+#resetButton, #startButton {
+  width:  200px;
+}
+
+#buttonContainer {
+  display:  inline-flex;
+}

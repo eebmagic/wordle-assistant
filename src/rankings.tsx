@@ -4,13 +4,11 @@ const letterFreqs = require('./data/letter_frequencies.json');
 
 export const rankLetterFreq = (wordList: string[]) => {
     // Reference file for letter frequencies
-    console.log('CALLED RANK LETTER FREQ');
+    // console.log('CALLED RANK LETTER FREQ');
 }
 
 export const rankWordFreq = (wordList: string[]) => {
     // Reference file for word frequencies
-    console.log('CALLED RANK WORD FREQ');
-
     let out = wordList.sort((a: string, b:string) => {
         return wordFreqs[a] - wordFreqs[b];
     }).reverse();
@@ -21,8 +19,6 @@ export const rankWordFreq = (wordList: string[]) => {
 export const rankSolnDivision = (wordList: string[]) => {
     // Rank by number of letters in a word
     //  that are ~50% present in wordList
-    console.log('CALLED RANK SOLN DIVISION');
-
     let presences = new Map<string, number>();
     let increment = 1 / wordList.length;
 
@@ -55,13 +51,6 @@ export const rankSolnDivision = (wordList: string[]) => {
     let out = wordList.sort((a: string, b: string) => {
         return wordVals.get(a)! - wordVals.get(b)!;
     }).reverse();
-
-    // console.log(`Total number of words: ${wordList.length}`);
-    // console.log('LETTER PRESENCES:')
-    // console.log(presences);
-    // console.log(letterVals);
-    // console.log(wordVals);
-    // console.log(out);
 
     return out;
 }

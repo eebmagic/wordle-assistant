@@ -105,7 +105,7 @@ function App() {
   const eg: { [key: number]: string } = {}
   const [exactGuesses, setExactGuesses] = useLocalStorage('exact-guesses', eg)
 
-  const openModal = () => setIsOpen(true)
+  const showResults = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
   const handleInfoClose = () => {
     setFirstTime(false)
@@ -118,7 +118,7 @@ function App() {
   useEffect(() => {
     if (gameState !== state.playing) {
       setTimeout(() => {
-        openModal()
+        showResults()
       }, 500)
     }
   }, [gameState])
@@ -270,7 +270,7 @@ function App() {
     if (gameState === state.playing && lastFilledRow && isRowAllGreen(lastFilledRow)) {
       setGameState(state.won)
 
-      var streak = currentStreak + 1
+      let streak = currentStreak + 1
       setCurrentStreak(streak)
       setLongestStreak((prev: number) => (streak > prev ? streak : prev))
     } else if (gameState === state.playing && currentRow === 6) {
@@ -361,6 +361,10 @@ function App() {
   }
 
   const getSolutions = () => {
+    // Optimization to avoid calls on just 3 letters
+    if (board[0][4] == '') {
+      return [];
+    }
     let grays = new Set<string>();
     let yellows = new Map<string, string>();
     let greens = '.....';
@@ -417,12 +421,7 @@ function App() {
       validWords = validWords.filter((word: string) => word.includes(letter));
     })
 
-    console.log('BEFORE RANKING:')
-    console.log(validWords);
     validWords = rankWords(validWords);
-    console.log('AFTER RANKING:')
-    console.log(validWords);
-
     return validWords;
   }
 
@@ -554,13 +553,22 @@ function App() {
             <div
               className={`absolute -bottom-16 left-1/2 transform -translate-x-1/2`}
             >
-              <div className={darkMode ? 'dark' : ''}>
+              <div className={darkMode ? 'dark' : ''} id="buttonContainer">
+                <button
+                  autoFocus
+                  type="button"
+                  id="resetButton"
+                  className="mx-[8px] rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
+                  onClick={() => {onEnterPress()}}
+                >
+                  RESET
+                </button>
                 <button
                   autoFocus
                   type="button"
                   id="startButton"
-                  className="rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
-                  onClick={() => {openModal()}}
+                  className="mx-[8px] rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
+                  onClick={() => {showResults()}}
                 >
                   FIND SOLUTIONS
                 </button>
