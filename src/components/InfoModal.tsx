@@ -22,13 +22,12 @@ export const InfoModal = ({ isOpen, handleClose, darkMode, styles }: Props) => (
       </button>
       <div className="h-full flex flex-col items-center justify-center max-w-[390px] mx-auto pt-9 text-primary dark:text-primary-dark">
         <div className="flex-1 w-full sm:text-base text-sm">
-          <h1 className="text-center sm:text-3xl text-2xl">How to play</h1>
+          <h1 className="text-center sm:text-3xl text-2xl">How to use this page</h1>
           <ul className="list-disc pl-5 block sm:text-base text-sm">
-            <li className="mt-6 mb-2">You have 6 guesses to guess the correct word.</li>
-            <li className="mb-2">You can guess any valid word.</li>
-            <li className="mb-2">
-              After each guess, each letter will turn green, yellow, or gray.
-            </li>
+            <li className="mt-6 mb-2"> Type out all of the guesses you've made so far. </li>
+            <li className="mb-2"> After typing, click each letter to cycle its color. </li>
+            <li className="mb-2"> Then hit the FIND SOLUTIONS button to list available words. </li>
+            <li className="mb-2"> Words are listed roughly in order that they make sense to try. </li>
           </ul>
           <div className="mb-3 mt-8 flex items-center">
             <span className="nm-inset-n-green text-gray-50 inline-flex items-center justify-center text-3x w-10 h-10 rounded-full">
@@ -51,7 +50,7 @@ export const InfoModal = ({ isOpen, handleClose, darkMode, styles }: Props) => (
           <span>Wrong letter</span>
         </div>
         <div className="flex justify-center sm:text-base text-sm">
-          <span>This project is open source on</span>
+          <span>Original source project is open source on</span>
           <a
             className="ml-[6px] rounded-full h-5 w-5 sm:h-6 sm:w-6"
             href="https://github.com/octokatherine/word-master"

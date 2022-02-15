@@ -45,3 +45,7 @@ html {
 #buttonContainer {
   display:  inline-flex;
 }
+
+#board {
+  transform: scale(0.9);
+}

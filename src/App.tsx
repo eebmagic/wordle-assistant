@@ -544,7 +544,7 @@ function App() {
             <Settings />
           </button>
           <h1 className="flex-1 text-center text-xl xxs:text-2xl sm:text-4xl tracking-wide font-bold font-righteous">
-            WORD MASTER
+            WORDLE RECS
           </h1>
           <button
             type="button"
@@ -554,7 +554,7 @@ function App() {
             <Info />
           </button>
         </header>
-        <div className="flex items-center bottom-8 flex-col py-3 flex-1 justify-center relative">
+        <div id="board" className="flex items-center bottom-8 flex-col py-3 flex-1 justify-center relative">
           <div className="relative">
             <div className="grid grid-cols-5 grid-flow-row gap-4">
               {board.map((row: string[], rowNumber: number) =>
