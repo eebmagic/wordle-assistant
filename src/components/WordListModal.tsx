@@ -34,16 +34,16 @@ export const WordListModal = ({
   wordList,
   totalLen
 }: Props) => {
-  const PlayAgainButton = () => {
+  const CloseButton = () => {
     return (
       <div className={darkMode ? 'dark' : ''}>
         <button
           autoFocus
           type="button"
           className="rounded-lg px-6 py-2 mt-8 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
-          onClick={playAgain}
+          onClick={handleClose}
         >
-          Play Again
+          Close
         </button>
       </div>
     )
@@ -81,7 +81,10 @@ export const WordListModal = ({
 
           <p><strong>{`[Total Remaining Words: ${totalLen}]`}</strong></p>
           <br/>
+
           <WordList />
+
+          <CloseButton />
         </div>
       </div>
     </Modal>
