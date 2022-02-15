@@ -1,7 +1,5 @@
 import { ReactComponent as Close } from '../data/Close.svg'
 import Modal from 'react-modal'
-import Success from '../data/Success.png'
-import Fail from '../data/Cross.png'
 
 Modal.setAppElement('#root')
 

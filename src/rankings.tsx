@@ -1,4 +1,3 @@
-const words = require('./data/fives.json');
 const wordFreqs = require('./data/frequencies.json');
 const letterFreqs = require('./data/letter_frequencies.json');
 

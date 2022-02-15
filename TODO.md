@@ -4,5 +4,6 @@
 - [x] Change page title
 - [x] Fix backspace issue
 - [ ] Gut out leftover original code
-- [ ] Address compile warnings
+- [x] Address compile warnings
+- [ ] Change README
 - [ ] Change styling to distinguish from original fork?

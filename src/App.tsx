@@ -1,7 +1,6 @@
 import { letters, status } from './constants'
 import { useEffect, useState } from 'react'
 
-import { EndGameModal } from './components/EndGameModal'
 import { WordListModal } from './components/WordListModal'
 import { InfoModal } from './components/InfoModal'
 import { Keyboard } from './components/Keyboard'
@@ -12,7 +11,6 @@ import { ReactComponent as Info } from './data/Info.svg'
 import { ReactComponent as Settings } from './data/Settings.svg'
 
 import { rankLetterFreq, rankWordFreq, rankSolnDivision } from './rankings'
-const words = require('./data/words').default as { [key: string]: boolean }
 const fives = require('./data/fives.json');
 
 const state = {
@@ -102,8 +100,6 @@ function App() {
       return 'Guess any valid word'
     }
   }
-  const eg: { [key: number]: string } = {}
-  const [exactGuesses, setExactGuesses] = useLocalStorage('exact-guesses', eg)
 
   const showResults = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
@@ -149,7 +145,7 @@ function App() {
     setSubmittedInvalidWord(false)
     setBoard((prev: string[][]) => {
       const newBoard = [...prev]
-      if (currentCol == 5) {
+      if (currentCol === 5) {
         newBoard[currentRow+1][0] = letter;
       } else {
         newBoard[currentRow][currentCol] = letter
@@ -171,32 +167,13 @@ function App() {
         return newCellStatuses;
       })
 
-      if (currentCol == 5) {
+      if (currentCol === 5) {
         setCurrentCol(1);
       } else {
         setCurrentCol(0);
       }
       setCurrentRow((prev: number) => prev + 1);
     }
-  }
-
-  // returns an array with a boolean of if the word is valid and an error message if it is not
-  const isValidWord = (word: string): [boolean] | [boolean, string] => {
-    if (word.length < 5) return [false, `please enter a 5 letter word`]
-    if (difficultyLevel === difficulty.easy) return [true]
-    debugger
-    if (!words[word.toLowerCase()]) return [false, `${word} is not a valid word. Please try again.`]
-    if (difficultyLevel === difficulty.normal) return [true]
-    const guessedLetters = Object.entries(letterStatuses).filter(([letter, letterStatus]) =>
-      [status.yellow, status.green].includes(letterStatus)
-    )
-    const yellowsUsed = guessedLetters.every(([letter, _]) => word.includes(letter))
-    const greensUsed = Object.entries(exactGuesses).every(
-      ([position, letter]) => word[parseInt(position)] === letter
-    )
-    if (!yellowsUsed || !greensUsed)
-      return [false, `In hard mode, you must use all the hints you've been given.`]
-    return [true]
   }
 
   const onEnterPress = () => {
@@ -228,40 +205,39 @@ function App() {
     }
   }
 
-  const updateCellStatuses = (word: string, rowNumber: number) => {
-    const fixedLetters: { [key: number]: string } = {}
-    setCellStatuses((prev: any) => {
-      const newCellStatuses = [...prev]
-      newCellStatuses[rowNumber] = [...prev[rowNumber]]
-      const wordLength = word.length
-      const answerLetters: string[] = answer.split('')
+  // const updateCellStatuses = (word: string, rowNumber: number) => {
+  //   const fixedLetters: { [key: number]: string } = {}
+  //   setCellStatuses((prev: any) => {
+  //     const newCellStatuses = [...prev]
+  //     newCellStatuses[rowNumber] = [...prev[rowNumber]]
+  //     const wordLength = word.length
+  //     const answerLetters: string[] = answer.split('')
 
-      // set all to gray
-      for (let i = 0; i < wordLength; i++) {
-        newCellStatuses[rowNumber][i] = status.gray
-      }
+  //     // set all to gray
+  //     for (let i = 0; i < wordLength; i++) {
+  //       newCellStatuses[rowNumber][i] = status.gray
+  //     }
 
-      // check greens
-      for (let i = wordLength - 1; i >= 0; i--) {
-        if (word[i] === answer[i]) {
-          newCellStatuses[rowNumber][i] = status.green
-          answerLetters.splice(i, 1)
-          fixedLetters[i] = answer[i]
-        }
-      }
+  //     // check greens
+  //     for (let i = wordLength - 1; i >= 0; i--) {
+  //       if (word[i] === answer[i]) {
+  //         newCellStatuses[rowNumber][i] = status.green
+  //         answerLetters.splice(i, 1)
+  //         fixedLetters[i] = answer[i]
+  //       }
+  //     }
 
-      // check yellows
-      for (let i = 0; i < wordLength; i++) {
-        if (answerLetters.includes(word[i]) && newCellStatuses[rowNumber][i] !== status.green) {
-          newCellStatuses[rowNumber][i] = status.yellow
-          answerLetters.splice(answerLetters.indexOf(word[i]), 1)
-        }
-      }
+  //     // check yellows
+  //     for (let i = 0; i < wordLength; i++) {
+  //       if (answerLetters.includes(word[i]) && newCellStatuses[rowNumber][i] !== status.green) {
+  //         newCellStatuses[rowNumber][i] = status.yellow
+  //         answerLetters.splice(answerLetters.indexOf(word[i]), 1)
+  //       }
+  //     }
 
-      return newCellStatuses
-    })
-    setExactGuesses((prev: { [key: number]: string }) => ({ ...prev, ...fixedLetters }))
-  }
+  //     return newCellStatuses
+  //   })
+  // }
 
   const isRowAllGreen = (row: string[]) => {
     return row.every((cell: string) => cell === status.green)
@@ -295,36 +271,16 @@ function App() {
     setLongestStreak,
   ])
 
-  const updateLetterStatuses = (word: string) => {
-    setLetterStatuses((prev: { [key: string]: string }) => {
-      const newLetterStatuses = { ...prev }
-      const wordLength = word.length
-      for (let i = 0; i < wordLength; i++) {
-        if (newLetterStatuses[word[i]] === status.green) continue
-
-        if (word[i] === answer[i]) {
-          newLetterStatuses[word[i]] = status.green
-        } else if (answer.includes(word[i])) {
-          newLetterStatuses[word[i]] = status.yellow
-        } else {
-          newLetterStatuses[word[i]] = status.gray
-        }
-      }
-      return newLetterStatuses
-    })
-  }
-
   const onClickFunc = (row: number, col: number) => {
     if (currentRow <= row) return;
 
     const roll = [status.gray, status.yellow, status.green];
-    let givenLetter = board[row][col];
 
     setCellStatuses((prev: any) => {
       const newCellStatuses = [...prev];
       newCellStatuses[row] = [...prev[row]];
 
-      if (prev[row][col] == status.unguessed) {
+      if (prev[row][col] === status.unguessed) {
         newCellStatuses[row][col] = status.gray;
       } else {
         let curr = prev[row][col];
@@ -343,7 +299,7 @@ function App() {
     yellows.forEach((yellow: any) => {
       for (let i = 0; i < yellow.length; i++) {
         let char = yellow[i];
-        if (char != '.') {
+        if (char !== '.') {
           constraints[i] += char;
         }
       }
@@ -357,7 +313,7 @@ function App() {
 
     const parts = [...constraints];
     for (let i = 0; i < greens.length; i++) {
-      if (greens[i] != '.') {
+      if (greens[i] !== '.') {
         parts[i] = greens[i];
       } else {
         parts[i] = `[^${constraints[i]}]`
@@ -371,20 +327,23 @@ function App() {
   const checkFullWords = () => {
     let out = true;
     board.forEach((row: string[]) => {
-      let a = row[0] == '';
-      let b = row[4] == '';
-      let result = !(a == b);
-      if (!(a == b)) {
+      let a = row[0] === '';
+      let b = row[4] === '';
+      let result = !(a === b);
+      if (result) {
         out = false;
       }
     });
+
+    if (board[0][0] === '') {
+      out = false;
+    }
 
     return out;
   }
 
   const getSolutions = () => {
     // Optimization to avoid calls on just 3 letters
-    // if (board[0][4] == '') {
     let fullWords = checkFullWords();
     if (!fullWords) {
       return [];
@@ -419,12 +378,12 @@ function App() {
               break;
 
             case "green":
-              if (greens[colInd] == '.') {
+              if (greens[colInd] === '.') {
                 const str = greens.split('');
                 str[colInd] = char;
                 greens = str.join('');
               } else {
-                if (greens[colInd] != char) {
+                if (greens[colInd] !== char) {
                   console.log(`##ERROR: Green char already defined as ${greens[colInd]} at ${colInd}: ${greens}`)
                 }
               }
@@ -503,7 +462,6 @@ function App() {
     setCurrentCol(initialStates.currentCol)
     setLetterStatuses(initialStates.letterStatuses())
     setSubmittedInvalidWord(initialStates.submittedInvalidWord)
-    setExactGuesses({})
 
     closeModal()
   }
