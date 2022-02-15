@@ -1,20 +1,18 @@
 {
   "files": {
-    "main.css": "/word-master/static/css/main.f2f8fde5.css",
-    "main.js": "/word-master/static/js/main.032ca458.js",
-    "static/media/Cross.png": "/word-master/static/media/Cross.cbf77228e847522eff11.png",
-    "static/media/Success.png": "/word-master/static/media/Success.df533be8f86a57bc5946.png",
-    "static/media/Ranade-Variable.ttf": "/word-master/static/media/Ranade-Variable.bb177f94a709e8e8f396.ttf",
-    "index.html": "/word-master/index.html",
-    "static/media/Github.svg": "/word-master/static/media/Github.6a9e1709e73c56888979048bb60e60a5.svg",
-    "static/media/Settings.svg": "/word-master/static/media/Settings.0808c435ed629b919ffa742a20d897f6.svg",
-    "static/media/Info.svg": "/word-master/static/media/Info.ee717ac430bb01bfbbd42aa3dbffe913.svg",
-    "static/media/Close.svg": "/word-master/static/media/Close.f34771d5d250820d8c5ec83c816bf8f5.svg",
-    "main.f2f8fde5.css.map": "/word-master/static/css/main.f2f8fde5.css.map",
-    "main.032ca458.js.map": "/word-master/static/js/main.032ca458.js.map"
+    "main.css": "./static/css/main.7437b2d1.css",
+    "main.js": "./static/js/main.4d23373b.js",
+    "static/media/Ranade-Variable.ttf": "./static/media/Ranade-Variable.bb177f94a709e8e8f396.ttf",
+    "index.html": "./index.html",
+    "static/media/Github.svg": "./static/media/Github.6a9e1709e73c56888979048bb60e60a5.svg",
+    "static/media/Settings.svg": "./static/media/Settings.0808c435ed629b919ffa742a20d897f6.svg",
+    "static/media/Info.svg": "./static/media/Info.ee717ac430bb01bfbbd42aa3dbffe913.svg",
+    "static/media/Close.svg": "./static/media/Close.f34771d5d250820d8c5ec83c816bf8f5.svg",
+    "main.7437b2d1.css.map": "./static/css/main.7437b2d1.css.map",
+    "main.4d23373b.js.map": "./static/js/main.4d23373b.js.map"
   },
   "entrypoints": [
-    "static/css/main.f2f8fde5.css",
-    "static/js/main.032ca458.js"
+    "static/css/main.7437b2d1.css",
+    "static/js/main.4d23373b.js"
   ]
 }
