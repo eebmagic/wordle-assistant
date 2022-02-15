@@ -28,6 +28,7 @@ export const InfoModal = ({ isOpen, handleClose, darkMode, styles }: Props) => (
             <li className="mb-2"> After typing, click each letter to cycle its color. </li>
             <li className="mb-2"> Then hit the FIND SOLUTIONS button to list available words. </li>
             <li className="mb-2"> Words are listed roughly in order that they make sense to try. </li>
+            <li className="mb-2"> Hit the RESET button to clear the board. </li>
           </ul>
           <div className="mb-3 mt-8 flex items-center">
             <span className="nm-inset-n-green text-gray-50 inline-flex items-center justify-center text-3x w-10 h-10 rounded-full">
@@ -48,6 +49,17 @@ export const InfoModal = ({ isOpen, handleClose, darkMode, styles }: Props) => (
           </span>
           <span className="mx-2">=</span>
           <span>Wrong letter</span>
+        </div>
+        <div className="flex justify-center sm:text-base text-sm">
+          <span>Source code for this project</span>
+          <a
+            className="ml-[6px] rounded-full h-5 w-5 sm:h-6 sm:w-6"
+            href="https://github.com/eebmagic/wordle-recs"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Github />
+          </a>
         </div>
         <div className="flex justify-center sm:text-base text-sm">
           <span>Original source project is open source on</span>
