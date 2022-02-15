@@ -378,12 +378,8 @@ function App() {
     // Optimization to avoid calls on just 3 letters
     // if (board[0][4] == '') {
     let fullWords = checkFullWords();
-    console.log(`Dont check?: ${fullWords}`);
     if (!fullWords) {
-      console.log('NOT CHECKING BECAUSE NOT FULL BOARD');
       return [];
-    } else {
-      console.log('CHECKING NOW')
     }
     let grays = new Set<string>();
     let yellows = new Map<string, string>();
