@@ -149,9 +149,14 @@ function App() {
     setSubmittedInvalidWord(false)
     setBoard((prev: string[][]) => {
       const newBoard = [...prev]
-      newBoard[currentRow][currentCol] = letter
+      if (currentCol == 5) {
+        newBoard[currentRow+1][0] = letter;
+      } else {
+        newBoard[currentRow][currentCol] = letter
+      }
       return newBoard
     })
+
     if (currentCol < 4) {
       setCurrentCol((prev: number) => prev + 1);
     } else {
@@ -166,7 +171,11 @@ function App() {
         return newCellStatuses;
       })
 
-      setCurrentCol(0);
+      if (currentCol == 5) {
+        setCurrentCol(1);
+      } else {
+        setCurrentCol(0);
+      }
       setCurrentRow((prev: number) => prev + 1);
     }
   }
@@ -196,12 +205,6 @@ function App() {
 
   const onDeletePress = () => {
     setSubmittedInvalidWord(false)
-    if (currentCol === 0) {
-      if (currentRow > 0) {
-        setCurrentCol(5);
-        setCurrentRow((prev: number) => prev - 1);
-      }
-    }
 
     setBoard((prev: any) => {
       const newBoard = [...prev]
@@ -215,7 +218,12 @@ function App() {
       return newCellStatuses;
     })
 
-    if (currentCol > 0) {
+    if (currentCol === 1) {
+      if (currentRow > 0) {
+        setCurrentCol(5);
+        setCurrentRow((prev: number) => prev - 1);
+      }
+    } else if (currentCol > 1) {
       setCurrentCol((prev: number) => prev - 1);
     }
   }

@@ -2,7 +2,7 @@
 - [x] Fix number of calls to findSolns()
 - [x] Fix sizing issue
 - [x] Change page title
-- [ ] Fix backspace issue
+- [x] Fix backspace issue
 - [ ] Gut out leftover original code
 - [ ] Address compile warnings
 - [ ] Change styling to distinguish from original fork?
