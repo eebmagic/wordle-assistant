@@ -3,7 +3,11 @@
 - [x] Fix sizing issue
 - [x] Change page title
 - [x] Fix backspace issue
+- [x] Full redo typing/backspace
+- [ ] Update tab name (& icon pic?)
 - [ ] Gut out leftover original code
+- [ ] Rename currentCol to better reflect list index approach
+- [ ] Automatically fill greens from previous states
 - [x] Address compile warnings
 - [ ] Change README
 - [ ] Change styling to distinguish from original fork?

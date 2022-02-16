@@ -120,15 +120,6 @@ function App() {
   }, [gameState])
 
   const getCellStyles = (rowNumber: number, colNumber: number, letter: string) => {
-    if (rowNumber === currentRow) {
-      if (letter) {
-        return `nm-inset-background dark:nm-inset-background-dark text-primary dark:text-primary-dark ${
-          submittedInvalidWord ? 'border border-red-800' : ''
-        }`
-      }
-      return 'nm-flat-background dark:nm-flat-background-dark text-primary dark:text-primary-dark'
-    }
-
     switch (cellStatuses[rowNumber][colNumber]) {
       case status.green:
         return 'nm-inset-n-green text-gray-50'
@@ -141,39 +132,42 @@ function App() {
     }
   }
 
+  const getPosition = (ind: number) => {
+    const width = 5;
+    let row = Math.floor(ind / width);
+    let col = ind % width;
+
+    return {'row': row, 'col': col};
+  }
+
   const addLetter = (letter: string) => {
-    setSubmittedInvalidWord(false)
+    // Get coordinate position
+    const pos = getPosition(currentCol);
+
+    // Add letter
     setBoard((prev: string[][]) => {
       const newBoard = [...prev]
-      if (currentCol === 5) {
-        newBoard[currentRow+1][0] = letter;
-      } else {
-        newBoard[currentRow][currentCol] = letter
-      }
+      newBoard[pos.row][pos.col] = letter;
+
       return newBoard
     })
 
-    if (currentCol < 4) {
-      setCurrentCol((prev: number) => prev + 1);
-    } else {
+    // Update statuses at end of row
+    if (pos.col >= 4) {
       setCellStatuses((prev: any) => {
         const newCellStatuses = [...prev];
-        newCellStatuses[currentRow] = [...prev[currentRow]];
+        newCellStatuses[pos.row] = [...prev[pos.row]];
 
-        for (let i = 0; i < newCellStatuses[currentRow].length; i++) {
-          newCellStatuses[currentRow][i] = status.gray;
+        for (let i = 0; i < newCellStatuses[pos.row].length; i++) {
+          newCellStatuses[pos.row][i] = status.gray;
         }
 
         return newCellStatuses;
       })
-
-      if (currentCol === 5) {
-        setCurrentCol(1);
-      } else {
-        setCurrentCol(0);
-      }
-      setCurrentRow((prev: number) => prev + 1);
     }
+
+    // Increment index
+    setCurrentCol((prev: number) => prev + 1);
   }
 
   const onEnterPress = () => {
@@ -181,63 +175,31 @@ function App() {
   }
 
   const onDeletePress = () => {
-    setSubmittedInvalidWord(false)
+    // Don't delete if already at front
+    if (currentCol === 0) return;
 
+    // Get coordinates from previous index
+    const pos = getPosition(currentCol - 1);
+
+    // Delete letter
     setBoard((prev: any) => {
       const newBoard = [...prev]
-      newBoard[currentRow][currentCol - 1] = ''
+      newBoard[pos.row][pos.col] = ''
       return newBoard
     })
 
+    // Update statuses for row where deleted
     setCellStatuses((prev: any) => {
       const newCellStatuses = [...prev];
-      newCellStatuses[currentRow][currentCol - 1] = status.unguessed;
+      for (let i = 0; i < newCellStatuses[pos.row].length; i++) {
+        newCellStatuses[pos.row][i] = status.unguessed;
+      }
       return newCellStatuses;
     })
 
-    if (currentCol === 1) {
-      if (currentRow > 0) {
-        setCurrentCol(5);
-        setCurrentRow((prev: number) => prev - 1);
-      }
-    } else if (currentCol > 1) {
-      setCurrentCol((prev: number) => prev - 1);
-    }
+    // Increment index
+    setCurrentCol((prev: number) => prev - 1);
   }
-
-  // const updateCellStatuses = (word: string, rowNumber: number) => {
-  //   const fixedLetters: { [key: number]: string } = {}
-  //   setCellStatuses((prev: any) => {
-  //     const newCellStatuses = [...prev]
-  //     newCellStatuses[rowNumber] = [...prev[rowNumber]]
-  //     const wordLength = word.length
-  //     const answerLetters: string[] = answer.split('')
-
-  //     // set all to gray
-  //     for (let i = 0; i < wordLength; i++) {
-  //       newCellStatuses[rowNumber][i] = status.gray
-  //     }
-
-  //     // check greens
-  //     for (let i = wordLength - 1; i >= 0; i--) {
-  //       if (word[i] === answer[i]) {
-  //         newCellStatuses[rowNumber][i] = status.green
-  //         answerLetters.splice(i, 1)
-  //         fixedLetters[i] = answer[i]
-  //       }
-  //     }
-
-  //     // check yellows
-  //     for (let i = 0; i < wordLength; i++) {
-  //       if (answerLetters.includes(word[i]) && newCellStatuses[rowNumber][i] !== status.green) {
-  //         newCellStatuses[rowNumber][i] = status.yellow
-  //         answerLetters.splice(answerLetters.indexOf(word[i]), 1)
-  //       }
-  //     }
-
-  //     return newCellStatuses
-  //   })
-  // }
 
   const isRowAllGreen = (row: string[]) => {
     return row.every((cell: string) => cell === status.green)
@@ -272,9 +234,9 @@ function App() {
   ])
 
   const onClickFunc = (row: number, col: number) => {
-    if (currentRow <= row) return;
+    if (getPosition(currentCol).row <= row) return;
 
-    const roll = [status.gray, status.yellow, status.green];
+    const order = [status.gray, status.yellow, status.green];
 
     setCellStatuses((prev: any) => {
       const newCellStatuses = [...prev];
@@ -284,7 +246,7 @@ function App() {
         newCellStatuses[row][col] = status.gray;
       } else {
         let curr = prev[row][col];
-        newCellStatuses[row][col] = roll[(roll.indexOf(curr) + 1) % roll.length];
+        newCellStatuses[row][col] = order[(order.indexOf(curr) + 1) % order.length];
       }
 
       return newCellStatuses;
@@ -524,8 +486,8 @@ function App() {
           <div className="relative">
             <div className="grid grid-cols-5 grid-flow-row gap-4">
               {board.map((row: string[], rowNumber: number) =>
-                row.map((letter: string, colNumber: number) => (
-                  <span
+                row.map((letter: string, colNumber: number) => {
+                  return <span
                     key={colNumber}
                     onClick={() => onClickFunc(rowNumber, colNumber)}
                     className={`${getCellStyles(
@@ -536,7 +498,7 @@ function App() {
                   >
                     {letter}
                   </span>
-                ))
+                })
               )}
             </div>
 
