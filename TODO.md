@@ -6,7 +6,7 @@
 - [x] Full redo typing/backspace
 - [x] Update tab name (& icon pic?)
 - [x] Gut out leftover original code
-- [ ] Rename currentCol to better reflect list index approach
+- [x] Rename currentCol to better reflect list index approach
 - [ ] Automatically fill greens from previous states
 - [x] Address compile warnings
 - [ ] Change README

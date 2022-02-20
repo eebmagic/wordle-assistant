@@ -16,7 +16,7 @@ const fives = require('./data/fives.json');
 type State = {
   board: string[][]
   cellStatuses: string[][]
-  currentCol: number
+  currentIndex: number
   letterStatuses: () => { [key: string]: string }
 }
 
@@ -31,7 +31,7 @@ function App() {
       ['', '', '', '', ''],
     ],
     cellStatuses: Array(6).fill(Array(5).fill(status.unguessed)),
-    currentCol: 0,
+    currentIndex: 0,
     letterStatuses: () => {
       const letterStatuses: { [key: string]: string } = {}
       letters.forEach((letter) => {
@@ -46,7 +46,7 @@ function App() {
     'stateCellStatuses',
     initialStates.cellStatuses
   )
-  const [currentCol, setCurrentCol] = useLocalStorage('stateCurrentCol', initialStates.currentCol)
+  const [currentIndex, setCurrentIndex] = useLocalStorage('stateCurrentIndex', initialStates.currentIndex)
   const [letterStatuses, setLetterStatuses] = useLocalStorage(
     'stateLetterStatuses',
     initialStates.letterStatuses()
@@ -89,7 +89,7 @@ function App() {
 
   const addLetter = (letter: string) => {
     // Get coordinate position
-    const pos = getPosition(currentCol);
+    const pos = getPosition(currentIndex);
 
     // Add letter
     setBoard((prev: string[][]) => {
@@ -114,7 +114,7 @@ function App() {
     }
 
     // Increment index
-    setCurrentCol((prev: number) => prev + 1);
+    setCurrentIndex((prev: number) => prev + 1);
   }
 
   const onEnterPress = () => {
@@ -123,10 +123,10 @@ function App() {
 
   const onDeletePress = () => {
     // Don't delete if already at front
-    if (currentCol === 0) return;
+    if (currentIndex === 0) return;
 
     // Get coordinates from previous index
-    const pos = getPosition(currentCol - 1);
+    const pos = getPosition(currentIndex - 1);
 
     // Delete letter
     setBoard((prev: any) => {
@@ -145,12 +145,12 @@ function App() {
     })
 
     // Increment index
-    setCurrentCol((prev: number) => prev - 1);
+    setCurrentIndex((prev: number) => prev - 1);
   }
 
   // Rotate through cell states
   const onClickFunc = (row: number, col: number) => {
-    if (getPosition(currentCol).row <= row) return;
+    if (getPosition(currentIndex).row <= row) return;
 
     const order = [status.gray, status.yellow, status.green];
 
@@ -338,7 +338,7 @@ function App() {
   const playAgain = () => {
     setBoard(initialStates.board)
     setCellStatuses(initialStates.cellStatuses)
-    setCurrentCol(initialStates.currentCol)
+    setCurrentIndex(initialStates.currentIndex)
     setLetterStatuses(initialStates.letterStatuses())
 
     closeModal()
