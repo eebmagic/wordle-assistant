@@ -9,5 +9,5 @@
 - [x] Rename currentCol to better reflect list index approach
 - [ ] Automatically fill greens from previous states
 - [x] Address compile warnings
-- [ ] Change README
+- [x] Change README
 - [ ] Change styling to distinguish from original fork?

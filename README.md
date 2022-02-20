@@ -1,22 +1,24 @@
-# Word Master
+# Wordle Recs
 
-🔗 https://octokatherine.github.io/word-master/
+🔗 https://eebmagic.github.io/wordle-recs/
 
-Heavily inspired by [Wordle](https://www.powerlanguage.co.uk/wordle/), Word Master is a word guessing game similar to Mastermind. I created this because I love Wordle, but the once a day limit leaves me wanting more.
+This page is intended to help find words that are valid solutions in [Wordle](https://www.powerlanguage.co.uk/wordle/).
 
-## Rules
+## Using
 
-You have 6 guesses to guess the correct word.
-Each guess can be any valid word.
+- Type out all the words that you've already guessed in Wordle and click letters to cycle through colorings until the page matches the current state in your wordle game.
 
-After submitting a guess, the letters will turn gray, green, or yellow.
+- Click the `FIND SOLUTIONS` button to show the list of valid words left.
 
-- Green: The letter is correct, in the correct position.
-- Yellow: The letter is correct, but in the wrong position.
-- Gray: The letter is incorrect.
 
-## Contributing
+## Approach Details
 
-Feel free to open an issue for any bugs or feature requests.
+- Valid words are first filtered with a regex through all five letter words.
+- Valid words are then sorted three ways:
+    1. Word frequency in english
+    2. Combined letter frequency ([similar to strategy of guessting R,S,T,L,N,E in Wheel of Fortune](https://uproxx.com/edge/wheel-of-fortune-wordle-strategies/))
+    3. Containing letters that would divide remaining words by nearly half
+        - If a word contains a letter that is contained in almost half of the remaining list then it will be ranked higher
+- Each of these three heuristics are weighted and combined for final sorting of the valid word list
+- The top 20 words are listed and the rest are cut off
 
-To contribute to the code, see [CONTRIBUTING.md](https://github.com/octokatherine/word-master/blob/main/CONTRIBUTING.md)
