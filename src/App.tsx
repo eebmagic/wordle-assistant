@@ -13,38 +13,15 @@ import { ReactComponent as Settings } from './data/Settings.svg'
 import { rankLetterFreq, rankWordFreq, rankSolnDivision } from './rankings'
 const fives = require('./data/fives.json');
 
-const state = {
-  playing: 'playing',
-  won: 'won',
-  lost: 'lost',
-}
-
-export const difficulty = {
-  easy: 'easy',
-  normal: 'normal',
-  hard: 'hard',
-}
-
-const getRandomAnswer = () => {
-  const randomIndex = Math.floor(Math.random() * answers.length)
-  return answers[randomIndex].toUpperCase()
-}
-
 type State = {
-  answer: () => string
-  gameState: string
   board: string[][]
   cellStatuses: string[][]
-  currentRow: number
   currentCol: number
   letterStatuses: () => { [key: string]: string }
-  submittedInvalidWord: boolean
 }
 
 function App() {
   const initialStates: State = {
-    answer: () => getRandomAnswer(),
-    gameState: state.playing,
     board: [
       ['', '', '', '', ''],
       ['', '', '', '', ''],
@@ -54,7 +31,6 @@ function App() {
       ['', '', '', '', ''],
     ],
     cellStatuses: Array(6).fill(Array(5).fill(status.unguessed)),
-    currentRow: 0,
     currentCol: 0,
     letterStatuses: () => {
       const letterStatuses: { [key: string]: string } = {}
@@ -63,61 +39,31 @@ function App() {
       })
       return letterStatuses
     },
-    submittedInvalidWord: false,
   }
 
-  const [answer, setAnswer] = useLocalStorage('stateAnswer', initialStates.answer())
-  const [gameState, setGameState] = useLocalStorage('stateGameState', initialStates.gameState)
   const [board, setBoard] = useLocalStorage('stateBoard', initialStates.board)
   const [cellStatuses, setCellStatuses] = useLocalStorage(
     'stateCellStatuses',
     initialStates.cellStatuses
   )
-  const [currentRow, setCurrentRow] = useLocalStorage('stateCurrentRow', initialStates.currentRow)
   const [currentCol, setCurrentCol] = useLocalStorage('stateCurrentCol', initialStates.currentCol)
   const [letterStatuses, setLetterStatuses] = useLocalStorage(
     'stateLetterStatuses',
     initialStates.letterStatuses()
   )
-  const [submittedInvalidWord, setSubmittedInvalidWord] = useLocalStorage(
-    'stateSubmittedInvalidWord',
-    initialStates.submittedInvalidWord
-  )
 
-  const [currentStreak, setCurrentStreak] = useLocalStorage('current-streak', 0)
-  const [longestStreak, setLongestStreak] = useLocalStorage('longest-streak', 0)
   const [modalIsOpen, setIsOpen] = useState(false)
-  const [firstTime, setFirstTime] = useLocalStorage('first-time', true)
-  const [infoModalIsOpen, setInfoModalIsOpen] = useState(firstTime)
+  const [infoModalIsOpen, setInfoModalIsOpen] = useLocalStorage('infoModalOpen', true)
   const [settingsModalIsOpen, setSettingsModalIsOpen] = useState(false)
-  const [difficultyLevel, setDifficultyLevel] = useLocalStorage('difficulty', difficulty.normal)
-  const getDifficultyLevelInstructions = () => {
-    if (difficultyLevel === difficulty.easy) {
-      return 'Guess any 5 letters'
-    } else if (difficultyLevel === difficulty.hard) {
-      return "Guess any valid word using all the hints you've been given"
-    } else {
-      return 'Guess any valid word'
-    }
-  }
 
   const showResults = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
   const handleInfoClose = () => {
-    setFirstTime(false)
     setInfoModalIsOpen(false)
   }
 
   const [darkMode, setDarkMode] = useLocalStorage('dark-mode', false)
   const toggleDarkMode = () => setDarkMode((prev: boolean) => !prev)
-
-  useEffect(() => {
-    if (gameState !== state.playing) {
-      setTimeout(() => {
-        showResults()
-      }, 500)
-    }
-  }, [gameState])
 
   const getCellStyles = (rowNumber: number, colNumber: number, letter: string) => {
     switch (cellStatuses[rowNumber][colNumber]) {
@@ -132,6 +78,7 @@ function App() {
     }
   }
 
+  // Helper for typing/deleting
   const getPosition = (ind: number) => {
     const width = 5;
     let row = Math.floor(ind / width);
@@ -201,38 +148,7 @@ function App() {
     setCurrentCol((prev: number) => prev - 1);
   }
 
-  const isRowAllGreen = (row: string[]) => {
-    return row.every((cell: string) => cell === status.green)
-  }
-
-  // every time cellStatuses updates, check if the game is won or lost
-  useEffect(() => {
-    const cellStatusesCopy = [...cellStatuses]
-    const reversedStatuses = cellStatusesCopy.reverse()
-    const lastFilledRow = reversedStatuses.find((r) => {
-      return r[0] !== status.unguessed
-    })
-
-    if (gameState === state.playing && lastFilledRow && isRowAllGreen(lastFilledRow)) {
-      setGameState(state.won)
-
-      let streak = currentStreak + 1
-      setCurrentStreak(streak)
-      setLongestStreak((prev: number) => (streak > prev ? streak : prev))
-    } else if (gameState === state.playing && currentRow === 6) {
-      setGameState(state.lost)
-      setCurrentStreak(0)
-    }
-  }, [
-    cellStatuses,
-    currentRow,
-    gameState,
-    setGameState,
-    currentStreak,
-    setCurrentStreak,
-    setLongestStreak,
-  ])
-
+  // Rotate through cell states
   const onClickFunc = (row: number, col: number) => {
     if (getPosition(currentCol).row <= row) return;
 
@@ -254,6 +170,7 @@ function App() {
 
   }
 
+  // Build regex expression to filter words
   const buildExpression = (grays: Set<string>, yellows: Map<string, string>, greens: string) => {
     const constraints = ['', '', '', '', ''];
 
@@ -286,6 +203,7 @@ function App() {
     return expression;
   }
 
+  // Check that full row of letters is written before searching for solutions
   const checkFullWords = () => {
     let out = true;
     board.forEach((row: string[]) => {
@@ -304,6 +222,7 @@ function App() {
     return out;
   }
 
+  // Get all valid words, sorted by preferred order
   const getSolutions = () => {
     // Optimization to avoid calls on just 3 letters
     let fullWords = checkFullWords();
@@ -370,6 +289,7 @@ function App() {
     return validWords;
   }
 
+  // Sort a list of words by various ranking functions
   const rankWords = (wordList: string[]) => {
     const letterWeight = 1;
     const wordFreqWeight = 6;
@@ -416,14 +336,10 @@ function App() {
   }
 
   const playAgain = () => {
-    setAnswer(initialStates.answer())
-    setGameState(initialStates.gameState)
     setBoard(initialStates.board)
     setCellStatuses(initialStates.cellStatuses)
-    setCurrentRow(initialStates.currentRow)
     setCurrentCol(initialStates.currentCol)
     setLetterStatuses(initialStates.letterStatuses())
-    setSubmittedInvalidWord(initialStates.submittedInvalidWord)
 
     closeModal()
   }
@@ -527,22 +443,6 @@ function App() {
               </div>
             </div>
 
-            <div
-              className={`absolute -bottom-24 left-1/2 transform -translate-x-1/2 ${
-                gameState === state.playing ? 'hidden' : ''
-              }`}
-            >
-              <div className={darkMode ? 'dark' : ''}>
-                <button
-                  autoFocus
-                  type="button"
-                  className="rounded-lg z-10 px-6 py-2 text-lg nm-flat-background dark:nm-flat-background-dark hover:nm-inset-background dark:hover:nm-inset-background-dark text-primary dark:text-primary-dark"
-                  onClick={playAgain}
-                >
-                  Play Again
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         <InfoModal
@@ -556,12 +456,6 @@ function App() {
           handleClose={closeModal}
           styles={modalStyles}
           darkMode={darkMode}
-          gameState={gameState}
-          state={state}
-          currentStreak={currentStreak}
-          longestStreak={longestStreak}
-          answer={answer}
-          playAgain={closeModal}
           wordList={getSolutions().slice(0, 20)}
           totalLen={getSolutions().length}
         />
@@ -571,17 +465,12 @@ function App() {
           styles={modalStyles}
           darkMode={darkMode}
           toggleDarkMode={toggleDarkMode}
-          difficultyLevel={difficultyLevel}
-          setDifficultyLevel={setDifficultyLevel}
-          levelInstructions={getDifficultyLevelInstructions()}
         />
-        <div className={`h-auto relative ${gameState === state.playing ? '' : 'invisible'}`}>
+        <div className={`h-auto relative`}>
           <Keyboard
-            letterStatuses={letterStatuses}
             addLetter={addLetter}
             onEnterPress={onEnterPress}
             onDeletePress={onDeletePress}
-            gameDisabled={gameState !== state.playing}
           />
         </div>
       </div>

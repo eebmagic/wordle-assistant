@@ -5,7 +5,7 @@
 - [x] Fix backspace issue
 - [x] Full redo typing/backspace
 - [x] Update tab name (& icon pic?)
-- [ ] Gut out leftover original code
+- [x] Gut out leftover original code
 - [ ] Rename currentCol to better reflect list index approach
 - [ ] Automatically fill greens from previous states
 - [x] Address compile warnings

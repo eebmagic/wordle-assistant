@@ -8,12 +8,6 @@ type Props = {
   handleClose: () => void
   styles: any
   darkMode: boolean
-  gameState: any
-  state: any
-  currentStreak: any
-  longestStreak: any
-  answer: any
-  playAgain: any
   wordList: string[]
   totalLen: number
 }
@@ -23,12 +17,6 @@ export const WordListModal = ({
   handleClose,
   styles,
   darkMode,
-  gameState,
-  state,
-  currentStreak,
-  longestStreak,
-  answer,
-  playAgain,
   wordList,
   totalLen
 }: Props) => {

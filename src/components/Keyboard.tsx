@@ -2,33 +2,16 @@ import { keyboardLetters, status, letters } from '../constants'
 import { useEffect, useCallback } from 'react'
 
 type Props = {
-  letterStatuses: { [key: string]: string }
-  gameDisabled: boolean
   onDeletePress: () => void
   onEnterPress: () => void
   addLetter: any
 }
 
 const Keyboard = ({
-  letterStatuses,
   addLetter,
   onEnterPress,
   onDeletePress,
-  gameDisabled,
 }: Props) => {
-  const getKeyStyle = (letter: string) => {
-    switch (letterStatuses[letter]) {
-      case status.green:
-        return 'bg-n-green text-gray-50'
-      case status.yellow:
-        return 'bg-yellow-500 text-gray-50'
-      case status.gray:
-        return 'bg-n-gray text-gray-50'
-      default:
-        return 'text-primary dark:text-primary-dark'
-    }
-  }
-
   const onKeyButtonPress = (letter: string) => {
     letter = letter.toLowerCase()
     window.dispatchEvent(
@@ -40,8 +23,6 @@ const Keyboard = ({
 
   const handleKeyDown = useCallback(
     (event) => {
-      if (gameDisabled) return
-
       const letter = event.key.toUpperCase()
 
       if (letters.includes(letter)) {
@@ -53,7 +34,7 @@ const Keyboard = ({
         onDeletePress()
       }
     },
-    [addLetter, onEnterPress, onDeletePress, gameDisabled]
+    [addLetter, onEnterPress, onDeletePress]
   )
 
   useEffect(() => {
@@ -81,9 +62,7 @@ const Keyboard = ({
               className="h-10 xxs:h-14 w-[2rem] sm:w-10 mx-[3.5px] text-sm font-medium rounded-[4px] nm-flat-background-sm dark:nm-flat-background-dark-sm"
             >
               <div
-                className={`h-full w-full rounded-[3px] flex items-center justify-center ${getKeyStyle(
-                  letter
-                )}`}
+                className={`h-full w-full rounded-[3px] flex items-center justify-center text-primary dark:text-primary-dark`}
               >
                 {letter}
               </div>

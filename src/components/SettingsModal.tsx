@@ -1,7 +1,6 @@
 import { RadioGroup, Switch } from '@headlessui/react'
 
 import Modal from 'react-modal'
-import { difficulty } from '../App'
 import { ReactComponent as Close } from '../data/Close.svg'
 
 Modal.setAppElement('#root')
@@ -12,9 +11,6 @@ type Props = {
   styles: any
   darkMode: boolean
   toggleDarkMode: () => void
-  difficultyLevel: string
-  setDifficultyLevel: any
-  levelInstructions: string
 }
 
 export const SettingsModal = ({
@@ -23,9 +19,6 @@ export const SettingsModal = ({
   styles,
   darkMode,
   toggleDarkMode,
-  difficultyLevel,
-  setDifficultyLevel,
-  levelInstructions,
 }: Props) => {
   return (
     <Modal
@@ -69,52 +62,6 @@ export const SettingsModal = ({
               </Switch.Label>
             </Switch.Group>
 
-            <RadioGroup value={difficultyLevel} onChange={setDifficultyLevel} className="mt-6">
-              <RadioGroup.Label className="w-full text-center">Difficulty Level</RadioGroup.Label>
-              <div className="grid grid-cols-3 gap-2 rounded-full mt-2 p-1 nm-inset-background dark:nm-inset-background-dark">
-                {Object.keys(difficulty).map((option) => (
-                  <RadioGroup.Option
-                    key={option}
-                    value={option}
-                    className={({ checked }) =>
-                      `text-primary dark:text-primary-dark ${
-                        checked
-                          ? 'bg-white dark:text-primary'
-                          : 'hover:nm-inset-background-sm dark:hover:nm-inset-background-dark-sm'
-                      }
-                        rounded-full py-2 px-3 flex items-center justify-center text-sm font-bold uppercase sm:flex-1 cursor-pointer`
-                    }
-                  >
-                    <RadioGroup.Label as="p">{option}</RadioGroup.Label>
-                  </RadioGroup.Option>
-                ))}
-              </div>
-            </RadioGroup>
-            <p className="text-center w-10/12 mx-auto font-medium">{levelInstructions}</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="mb-4">
-              If you're enjoying this game, you can show your support by{' '}
-              <a
-                href="https://www.buymeacoffee.com/katherinecodes"
-                target="_blank"
-                rel="noreferrer"
-              >
-                buying me a coffee
-              </a>
-              <span className="ml-1 text-xs">💛</span>
-            </div>
-            <a
-              href="https://www.buymeacoffee.com/katherinecodes"
-              target="_blank"
-              rel="noreferrer"
-              className="nm-flat-background dark:nm-flat-background-dark rounded-xl hover:nm-inset-background dark:hover:nm-inset-background-dark"
-            >
-              <img
-                alt="buy me a coffee"
-                src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=katherinecodes&button_colour=eab308&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"
-              />
-            </a>
           </div>
         </div>
       </div>
