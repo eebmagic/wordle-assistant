@@ -1,11 +1,10 @@
-import { letters, status } from './constants'
-import { useEffect, useState } from 'react'
+import { status } from './constants'
+import { useState } from 'react'
 
 import { WordListModal } from './components/WordListModal'
 import { InfoModal } from './components/InfoModal'
 import { Keyboard } from './components/Keyboard'
 import { SettingsModal } from './components/SettingsModal'
-import answers from './data/answers'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { ReactComponent as Info } from './data/Info.svg'
 import { ReactComponent as Settings } from './data/Settings.svg'
@@ -17,7 +16,6 @@ type State = {
   board: string[][]
   cellStatuses: string[][]
   currentIndex: number
-  letterStatuses: () => { [key: string]: string }
 }
 
 function App() {
@@ -32,13 +30,6 @@ function App() {
     ],
     cellStatuses: Array(6).fill(Array(5).fill(status.unguessed)),
     currentIndex: 0,
-    letterStatuses: () => {
-      const letterStatuses: { [key: string]: string } = {}
-      letters.forEach((letter) => {
-        letterStatuses[letter] = status.unguessed
-      })
-      return letterStatuses
-    },
   }
 
   const [board, setBoard] = useLocalStorage('stateBoard', initialStates.board)
@@ -47,10 +38,6 @@ function App() {
     initialStates.cellStatuses
   )
   const [currentIndex, setCurrentIndex] = useLocalStorage('stateCurrentIndex', initialStates.currentIndex)
-  const [letterStatuses, setLetterStatuses] = useLocalStorage(
-    'stateLetterStatuses',
-    initialStates.letterStatuses()
-  )
 
   const [modalIsOpen, setIsOpen] = useState(false)
   const [infoModalIsOpen, setInfoModalIsOpen] = useLocalStorage('infoModalOpen', true)
@@ -339,7 +326,6 @@ function App() {
     setBoard(initialStates.board)
     setCellStatuses(initialStates.cellStatuses)
     setCurrentIndex(initialStates.currentIndex)
-    setLetterStatuses(initialStates.letterStatuses())
 
     closeModal()
   }

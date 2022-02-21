@@ -1,4 +1,4 @@
-import { keyboardLetters, status, letters } from '../constants'
+import { keyboardLetters, letters } from '../constants'
 import { useEffect, useCallback } from 'react'
 
 type Props = {

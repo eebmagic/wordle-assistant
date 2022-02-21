@@ -1,4 +1,4 @@
-import { RadioGroup, Switch } from '@headlessui/react'
+import { Switch } from '@headlessui/react'
 
 import Modal from 'react-modal'
 import { ReactComponent as Close } from '../data/Close.svg'
